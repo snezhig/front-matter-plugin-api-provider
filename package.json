@@ -1,0 +1,19 @@
+{
+  "name": "front-matter-plugin-api-provider",
+  "version": "0.0.2",
+  "description": "API provider for Obsidian Front Matter Plugin",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "npx tsc"
+  },
+  "keywords": [],
+  "author": "snezhig",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "obsidian": "^0.15.9"
+  }
+}
