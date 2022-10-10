@@ -6,45 +6,31 @@ export class PluginNotEnabledError extends Error {
 
 }
 
-export class PluginBindIncompleteError extends Error {
+export class PluginIsNotReadyError extends Error {
 
 }
 
-export interface Api {
+export interface PluginInterface {
+    getDeffer(): DefferInterface;
+}
+
+export interface ApiInterface {
     resolveSync(path: string): string | null;
 
     resolve(path: string): Promise<string | null>
 }
 
-export interface Deffer {
-    /**@throws PluginBindIncompleteError*/
-    getApi(): Api;
-}
+export interface DefferInterface {
+    /**@throws PluginIsNotReadyError*/
+    getApi(): ApiInterface;
 
-export interface BindDeffer extends Deffer {
-    /*
-     * After resolve API object will be available
-     */
-    awaitBind(): Promise<BootDeffer>
+    isPluginReady(): boolean;
 
-    /**
-     * if true, getApi will return an object otherwise throw an exception
-     */
-    isBound(): boolean
+    awaitPlugin(): Promise<void>
 
-}
+    isManagersReady(): boolean;
 
-export interface BootDeffer extends Deffer {
-    isBooted(): boolean
-
-    /**
-     * wait until plugin boot all managers after manual delay (depends on user's settings)
-     */
-    awaitBoot(): Promise<void>
-}
-
-export interface Plugin {
-    getDeffer(): BindDeffer;
+    awaitManagers(): Promise<void>
 }
 
 /**
@@ -60,9 +46,9 @@ export function isPluginEnabled(app: App): boolean {
  *
  * @throws PluginNotEnabledError
  */
-export function getDeffer(app: App): BindDeffer {
+export function getDeffer(app: App): DefferInterface {
     //@ts-ignore
-    const plugin = (app?.plugins?.getPlugin(pluginId) as Plugin) ?? null;
+    const plugin = (app?.plugins?.getPlugin(pluginId) as PluginInterface) ?? null;
     const deffer = plugin?.getDeffer() ?? null;
     if (deffer === null) {
         throw new PluginNotEnabledError();
@@ -71,16 +57,16 @@ export function getDeffer(app: App): BindDeffer {
 }
 
 /**
- * Wrapper for object. It will check itself if plugin is enabled and defer is bound
+ * Wrapper for object. It will check itself if plugin is enabled and ready
  * @param app
  */
-export function getApiSafe(app: App): Api {
+export function getApiSafe(app: App): ApiInterface {
     return new ApiWrapper(null, app);
 }
 
-class ApiWrapper implements Api {
+class ApiWrapper implements ApiInterface {
     constructor(
-        private api: Api | null,
+        private api: ApiInterface | null,
         private app: App
     ) {
 
@@ -95,8 +81,8 @@ class ApiWrapper implements Api {
                 if (e instanceof PluginNotEnabledError) {
                     this.api = null;
                     return;
-                } else if (e instanceof PluginBindIncompleteError) {
-                    return deffer.awaitBind().then(() => {
+                } else if (e instanceof PluginIsNotReadyError) {
+                    return deffer.awaitPlugin().then(() => {
                         this.api = deffer.getApi();
                     });
                 }
@@ -115,7 +101,7 @@ class ApiWrapper implements Api {
         if (br instanceof Promise) {
             await br;
         }
-        return this.resolveSync(path) ?? null;
+        return await this.api?.resolve(path) ?? null;
     }
 
     /**
