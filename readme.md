@@ -3,6 +3,11 @@
 This package provide some functions to get API from to resolve file titles
 by [Front Matter Title](https://github.com/Snezhig/obsidian-front-matter-title) which is required to be installed
 
+
+## Installation
+`npm i front-matter-plugin-api-provider`
+
+
 ### Documentation
 
 |                      Method                      |                                  Description                                  |
