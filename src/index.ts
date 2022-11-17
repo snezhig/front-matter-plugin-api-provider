@@ -28,9 +28,9 @@ export interface DefferInterface {
 
     awaitPlugin(): Promise<void>
 
-    isManagersReady(): boolean;
+    isFeaturesReady(): boolean;
 
-    awaitManagers(): Promise<void>
+    awaitFeatures(): Promise<void>
 }
 
 /**
