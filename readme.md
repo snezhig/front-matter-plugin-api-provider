@@ -18,8 +18,8 @@ by [Front Matter Title](https://github.com/Snezhig/obsidian-front-matter-title) 
 |     `DefferInterface.getApi(): ApiInterface`     |      returns API if plugin is ready or throws PluginBindIncompleteError       |
 |     `DefferInterface.isPluginReady(): bool`      |                        returns true if plugin is ready                        |
 |  `DefferInterface.awaitPlugin(): Promise<void>`  |          returns promise which will be resolved when plugin is ready          |
-|    `DefferInterface.isManagersReady(): bool`     |                  returns true if plugin's managers are ready                  |
-| `DefferInterface.awaitManagers(): Promise<void>` |   returns promise which will be resolved when plugin and managers are ready   |
+|    `DefferInterface.isFeaturesReady(): bool`     |                  returns true if plugin's features are ready                  |
+| `DefferInterface.awaitFeatures(): Promise<void>` |   returns promise which will be resolved when plugin and features are ready   |
 
 ### Get API
 
@@ -34,9 +34,9 @@ if (deffer.isPluginReady()) {
 } else {
     await deffer.awaitPlugin();
     api = deffer.getApi();
-    //if you want to wait managers you can use the following chain
-    if (!deffer.isManagersReady()) {
-        await deffer.awaitManagers();
+    //if you want to wait features you can use the following chain
+    if (!deffer.isFeaturesReady()) {
+        await deffer.awaitFeatures();
     }
 }
 //Resolve title asynchronously
@@ -56,7 +56,7 @@ const path = 'Folder/ds1.md';
 const api = getApiSafe(this.app);
 
 //Resolve title asynchronously.
-//It will a promise which waits plugin or managers, then resolves title.
+//It will a promise which waits plugin or features, then resolves title.
 api.resolve(path).then(console.log);
 
 //Resolve title synchronously.  It will return null, if plugin is not ready yet

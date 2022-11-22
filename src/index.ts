@@ -51,7 +51,7 @@ export function getDeffer(app: App): DefferInterface {
     const plugin = (app?.plugins?.getPlugin(pluginId) as PluginInterface) ?? null;
     const deffer = plugin?.getDeffer() ?? null;
     if (deffer === null) {
-        throw new PluginNotEnabledError();
+        throw new PluginNotEnabledError(`Plugin ${pluginId} is not enabled or old version`);
     }
     return deffer;
 }
@@ -72,24 +72,39 @@ class ApiWrapper implements ApiInterface {
 
     }
 
+
     private before(): Promise<void> | void {
-        if (this.api === null) {
-            const deffer = getDeffer(this.app);
-            try {
-                this.api = deffer.getApi();
-            } catch (e) {
-                if (e instanceof PluginNotEnabledError) {
-                    this.api = null;
-                    return;
-                } else if (e instanceof PluginIsNotReadyError) {
-                    return deffer.awaitPlugin().then(() => {
-                        this.api = deffer.getApi();
-                    });
-                }
-                throw e;
+        if (this.api !== null) {
+            return;
+        }
+        const deffer = this.getDeffer();
+        if (deffer === null) {
+            return;
+        }
+
+        try {
+            this.api = deffer.getApi();
+        } catch (e) {
+            if (e instanceof PluginIsNotReadyError) {
+                return deffer.awaitPlugin().then(() => {
+                    this.api = deffer.getApi();
+                });
             }
+            throw e;
         }
     }
+
+    private getDeffer(): DefferInterface | null {
+        try {
+            return getDeffer(this.app);
+        } catch (e) {
+            if (e instanceof PluginNotEnabledError) {
+                return null;
+            }
+            throw e;
+        }
+    }
+
 
     /**
      *
