@@ -15,7 +15,7 @@ by [Front Matter Title](https://github.com/Snezhig/obsidian-front-matter-title) 
 |        `isPluginEnabled(app: App): bool`         |        returns true if `obsidian-front-matter-title-plugin` is enabled        |
 |       `getApiSafe(app: App): ApiInterface`       |       returns an object which catch internal errors and get Api itself        |
 |      `getDeffer(app: App): DefferInterface`      | returns an object that provides functions to check plugin's state and get API |
-|     `DefferInterface.getApi(): ApiInterface`     |      returns API if plugin is ready or throws PluginBindIncompleteError       |
+| `DefferInterface.getApi(): ApiInterface or null` |                    returns API if plugin is ready or null                     |
 |     `DefferInterface.isPluginReady(): bool`      |                        returns true if plugin is ready                        |
 |  `DefferInterface.awaitPlugin(): Promise<void>`  |          returns promise which will be resolved when plugin is ready          |
 |    `DefferInterface.isFeaturesReady(): bool`     |                  returns true if plugin's features are ready                  |

@@ -6,10 +6,6 @@ export class PluginNotEnabledError extends Error {
 
 }
 
-export class PluginIsNotReadyError extends Error {
-
-}
-
 export interface PluginInterface {
     getDeffer(): DefferInterface;
 }
@@ -21,8 +17,7 @@ export interface ApiInterface {
 }
 
 export interface DefferInterface {
-    /**@throws PluginIsNotReadyError*/
-    getApi(): ApiInterface;
+    getApi(): ApiInterface | null;
 
     isPluginReady(): boolean;
 
@@ -81,16 +76,13 @@ class ApiWrapper implements ApiInterface {
         if (deffer === null) {
             return;
         }
-
-        try {
-            this.api = deffer.getApi();
-        } catch (e) {
-            if (e instanceof PluginIsNotReadyError) {
-                return deffer.awaitPlugin().then(() => {
-                    this.api = deffer.getApi();
-                });
-            }
-            throw e;
+        const api = deffer.getApi();
+        if (api === null) {
+            return deffer.awaitPlugin().then(() => {
+                this.api = deffer.getApi()
+            });
+        } else {
+            this.api = api;
         }
     }
 
