@@ -7,7 +7,7 @@ export class PluginNotEnabledError extends Error {
 }
 
 export interface PluginInterface {
-    getDeffer(): DefferInterface;
+    getDefer(): DeferInterface;
 }
 
 export interface ApiInterface {
@@ -16,7 +16,7 @@ export interface ApiInterface {
     resolve(path: string): Promise<string | null>
 }
 
-export interface DefferInterface {
+export interface DeferInterface {
     getApi(): ApiInterface | null;
 
     isPluginReady(): boolean;
@@ -41,14 +41,14 @@ export function isPluginEnabled(app: App): boolean {
  *
  * @throws PluginNotEnabledError
  */
-export function getDeffer(app: App): DefferInterface {
+export function getDefer(app: App): DeferInterface {
     //@ts-ignore
     const plugin = (app?.plugins?.getPlugin(pluginId) as PluginInterface) ?? null;
-    const deffer = plugin?.getDeffer() ?? null;
-    if (deffer === null) {
+    const defer = plugin?.getDefer?.() ?? null;
+    if (defer === null) {
         throw new PluginNotEnabledError(`Plugin ${pluginId} is not enabled or old version`);
     }
-    return deffer;
+    return defer;
 }
 
 /**
@@ -72,23 +72,23 @@ class ApiWrapper implements ApiInterface {
         if (this.api !== null) {
             return;
         }
-        const deffer = this.getDeffer();
-        if (deffer === null) {
+        const defer = this.getDeffer();
+        if (defer === null) {
             return;
         }
-        const api = deffer.getApi();
+        const api = defer.getApi();
         if (api === null) {
-            return deffer.awaitPlugin().then(() => {
-                this.api = deffer.getApi()
+            return defer.awaitPlugin().then(() => {
+                this.api = defer.getApi()
             });
         } else {
             this.api = api;
         }
     }
 
-    private getDeffer(): DefferInterface | null {
+    private getDeffer(): DeferInterface | null {
         try {
-            return getDeffer(this.app);
+            return getDefer(this.app);
         } catch (e) {
             if (e instanceof PluginNotEnabledError) {
                 return null;
