@@ -7,21 +7,7 @@ by [Front Matter Title](https://github.com/Snezhig/obsidian-front-matter-title) 
 ## Installation
 `npm i front-matter-plugin-api-provider`
 
-
-### Documentation
-
-|                      Method                      |                                  Description                                  |
-|:------------------------------------------------:|:-----------------------------------------------------------------------------:|
-|        `isPluginEnabled(app: App): bool`         |        returns true if `obsidian-front-matter-title-plugin` is enabled        |
-|       `getApiSafe(app: App): ApiInterface`       |       returns an object which catch internal errors and get Api itself        |
-|      `getDeffer(app: App): DefferInterface`      | returns an object that provides functions to check plugin's state and get API |
-| `DefferInterface.getApi(): ApiInterface or null` |                    returns API if plugin is ready or null                     |
-|     `DefferInterface.isPluginReady(): bool`      |                        returns true if plugin is ready                        |
-|  `DefferInterface.awaitPlugin(): Promise<void>`  |          returns promise which will be resolved when plugin is ready          |
-|    `DefferInterface.isFeaturesReady(): bool`     |                  returns true if plugin's features are ready                  |
-| `DefferInterface.awaitFeatures(): Promise<void>` |   returns promise which will be resolved when plugin and features are ready   |
-
-### Get API
+## Get Api Instance
 
 ```typescript
 import {getDeffer} from "front-matter-plugin-api-provider";
@@ -39,11 +25,6 @@ if (deffer.isPluginReady()) {
         await deffer.awaitFeatures();
     }
 }
-//Resolve title asynchronously
-await api.resolve(path).then(console.log)
-
-//Resolve title synchronously
-console.log(api.resolveSync(path));
 ```
 
 or you can use **Safe Wrapper**
@@ -54,11 +35,37 @@ import {getApiSafe} from "front-matter-plugin-api-provider";
 const path = 'Folder/ds1.md';
 //Wrapper will check
 const api = getApiSafe(this.app);
+```
 
-//Resolve title asynchronously.
-//It will a promise which waits plugin or features, then resolves title.
-api.resolve(path).then(console.log);
+## Use Api Instance
 
-//Resolve title synchronously.  It will return null, if plugin is not ready yet
-console.log(api.resolveSync(path));
+## Get enabled features
+```typescript
+const api: ApiInterface;
+
+//It will return list of enabled features.
+const ids = api.getEnabledFeatures();
+```
+### Get resolver
+```typescript
+const api: ApiInterface;
+
+//Get factory and create a resolver for feature.
+//WARNING: if you pass disabled feature id, you will get a resolver which returns value by settings for features.
+const resolver = api.getResolverFactory().createResolver('#feature-id#');
+console.log(resolver.resolve('file.md'));
+```
+### Get event dispatcher
+```typescript
+const api: ApiInterface;
+
+const dispatcher = api.getEventDispatcher();
+const event = {
+    name: "manager:update",
+    callback: console.log
+}
+//Keep ref to remove listener
+const ref = dispatcher.addListener(event);
+//Remove listener, if needed
+dispatcher.removeListener(ref)
 ```

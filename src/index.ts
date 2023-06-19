@@ -1,31 +1,16 @@
-import {App} from "obsidian";
+import { App } from "obsidian";
+import { DeferInterface, ApiInterface } from "./contracts/Api";
+import { EventDispatcherInterface } from "./contracts/EventDispatcher";
+import { ResolverFactory } from "./contracts/Resolver";
+
+export * from "./contracts/Api"
+export * from "./contracts/EventDispatcher"
+export * from "./contracts/Resolver"
 
 export const pluginId = 'obsidian-front-matter-title-plugin'
 
 export class PluginNotEnabledError extends Error {
 
-}
-
-export interface PluginInterface {
-    getDefer(): DeferInterface;
-}
-
-export interface ApiInterface {
-    resolveSync(path: string): string | null;
-
-    resolve(path: string): Promise<string | null>
-}
-
-export interface DeferInterface {
-    getApi(): ApiInterface | null;
-
-    isPluginReady(): boolean;
-
-    awaitPlugin(): Promise<void>
-
-    isFeaturesReady(): boolean;
-
-    awaitFeatures(): Promise<void>
 }
 
 /**
@@ -97,26 +82,18 @@ class ApiWrapper implements ApiInterface {
         }
     }
 
-
-    /**
-     *
-     * @param path
-     * return null if plugin is not enabled or deffer is not bound
-     */
-    async resolve(path: string): Promise<string | null> {
-        const br = this.before();
-        if (br instanceof Promise) {
-            await br;
-        }
-        return await this.api?.resolve(path) ?? null;
+    getResolverFactory(): ResolverFactory | null {
+        this.before();
+        return this.api?.getResolverFactory() ?? null;
     }
 
-    /**
-     * returns null if plugin is not enabled or a promise
-     * @param path
-     */
-    resolveSync(path: string): string | null {
+    getEventDispatcher<T extends {}>(): EventDispatcherInterface<T> | null {
         this.before();
-        return this.api?.resolveSync(path) ?? null;
+        return this.api?.getEventDispatcher() ?? null;
+    }
+
+    getEnabledFeatures(): string[] {
+        this.before();
+        return this.api?.getEnabledFeatures() ?? [];
     }
 }
