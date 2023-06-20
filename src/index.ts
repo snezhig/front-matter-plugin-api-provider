@@ -1,6 +1,6 @@
 import { App } from "obsidian";
 import { DeferInterface, ApiInterface } from "./contracts/Api";
-import { EventDispatcherInterface } from "./contracts/EventDispatcher";
+import { EventDispatcherInterface, Events } from "./contracts/EventDispatcher";
 import { ResolverFactory } from "./contracts/Resolver";
 
 export * from "./contracts/Api"
@@ -87,7 +87,7 @@ class ApiWrapper implements ApiInterface {
         return this.api?.getResolverFactory() ?? null;
     }
 
-    getEventDispatcher<T extends {}>(): EventDispatcherInterface<T> | null {
+    getEventDispatcher(): EventDispatcherInterface<Events> | null {
         this.before();
         return this.api?.getEventDispatcher() ?? null;
     }
