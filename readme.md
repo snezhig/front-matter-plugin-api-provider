@@ -13,7 +13,7 @@ by [Front Matter Title](https://github.com/Snezhig/obsidian-front-matter-title) 
 import {getDeffer} from "front-matter-plugin-api-provider";
 
 const path = 'Folder/ds1.md';
-const deffer = getDeffer(this.app);
+const deffer = getDefer(this.app);
 let api = null;
 if (deffer.isPluginReady()) {
     api = deffer.getApi();
@@ -62,7 +62,7 @@ const api: ApiInterface;
 const dispatcher = api.getEventDispatcher();
 const event = {
     name: "manager:update",
-    callback: console.log
+    cb: console.log
 }
 //Keep ref to remove listener
 const ref = dispatcher.addListener(event);
