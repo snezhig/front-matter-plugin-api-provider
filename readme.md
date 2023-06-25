@@ -13,16 +13,16 @@ by [Front Matter Title](https://github.com/Snezhig/obsidian-front-matter-title) 
 import {getDefer} from "front-matter-plugin-api-provider";
 
 const path = 'Folder/ds1.md';
-const deffer = getDefer(this.app);
+const defer = getDefer(this.app);
 let api = null;
-if (deffer.isPluginReady()) {
-    api = deffer.getApi();
+if (defer.isPluginReady()) {
+    api = defer.getApi();
 } else {
-    await deffer.awaitPlugin();
-    api = deffer.getApi();
+    await defer.awaitPlugin();
+    api = defer.getApi();
     //if you want to wait features you can use the following chain
-    if (!deffer.isFeaturesReady()) {
-        await deffer.awaitFeatures();
+    if (!defer.isFeaturesReady()) {
+        await defer.awaitFeatures();
     }
 }
 ```
