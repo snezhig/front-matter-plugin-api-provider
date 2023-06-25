@@ -10,7 +10,7 @@ by [Front Matter Title](https://github.com/Snezhig/obsidian-front-matter-title) 
 ## Get Api Instance
 
 ```typescript
-import {getDeffer} from "front-matter-plugin-api-provider";
+import {getDefer} from "front-matter-plugin-api-provider";
 
 const path = 'Folder/ds1.md';
 const deffer = getDefer(this.app);
