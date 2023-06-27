@@ -25,5 +25,5 @@ export interface EventDispatcherInterface<E> {
 
 
 export type Events = {
-    "manager:update": { id: string; result: boolean }
+    "manager:update": { id: string; result: boolean, path: string }
 }
