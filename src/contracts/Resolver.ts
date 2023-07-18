@@ -1,5 +1,5 @@
 export interface ResolverInterface {
-    resolver(path: string): string | null
+    resolve(path: string): string | null
 }
 
 export interface ResolverFactory {
